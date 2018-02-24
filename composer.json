@@ -1,0 +1,22 @@
+{
+  "name": "enpii/enpii-fbcs",
+  "description": "An Enpii's plugin. Synchronize FaceBook comments with WP built-in comments.",
+  "type": "wordpress-plugin",
+  "authors": [
+    {
+      "name": "Trac Nguyen",
+      "email": "npbtrac@yahoo.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.4.0",
+    "facebook/graph-sdk": "^5.6"
+  },
+  "autoload": {
+    "psr-4": {
+      "Enpii\\WpPlugin\\Fbcs\\Base\\": "src/base",
+      "Enpii\\WpPlugin\\Fbcs\\": "src"
+    }
+  },
+  "minimum-stability": "stable"
+}
