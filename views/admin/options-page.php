@@ -8,9 +8,8 @@
 
 use \Enpii\WpPlugin\Fbcs\Fbcs;
 
+wp_enqueue_style('fbcs_admin', Fbcs::plugin_dir_url() . '/assets/dist/css/admin.css');
 ?>
-<link href="<?php echo Fbcs::plugin_dir_url() . '/assets/dist/css/admin.css'; ?>" rel="stylesheet"
-      type="text/css">
 <div class="options">
     <div class="options_header">
         <h1><?= __( 'Facebook Comments Sync', Fbcs::text_domain() ) ?></h1>
@@ -436,52 +435,6 @@ use \Enpii\WpPlugin\Fbcs\Fbcs;
                         </td>
                     </tr>
                 </table>
-
-                <script>
-                    jQuery(document).ready(function ($) {
-                        var $syncLatestPosts = $('#sync-latest-posts');
-                        var syncLatestPostsText = $syncLatestPosts.text();
-
-                        var posts_per_page = 2;
-
-                        function syncLatestPosts(posts_per_page, offset) {
-                            $.ajax({
-                                type: 'POST',
-                                dataType: 'json',
-                                url: ajaxurl,
-                                data: {
-                                    'action': 'fbcs_sync_latest_posts',
-                                    'posts_per_page': posts_per_page,
-                                    'offset': offset,
-                                    'limit': -1
-                                },
-                                complete: function (event) {
-                                },
-                                success: function (response) {
-                                    var found_posts = parseInt(response.found_posts);
-                                    var offset = parseInt(response.offset);
-
-                                    if (found_posts > (offset + 1) * posts_per_page) {
-                                        $syncLatestPosts.text('Syncing...' + (posts_per_page * (offset + 1)) + ' to ' + (posts_per_page * (offset + 2) > found_posts ? found_posts : posts_per_page * (offset + 2)) + ' of ' + found_posts);
-                                        syncLatestPosts(posts_per_page, offset + 1);
-                                    } else {
-                                        $syncLatestPosts.text(syncLatestPostsText).removeAttr('disabled');
-                                        console.log('Sync completed!');
-                                    }
-                                },
-                                error: function (exception) {
-                                    console.log('Ajax failed!');
-                                    console.log(exception);
-                                }
-                            });
-                        }
-
-                        $syncLatestPosts.click(function () {
-                            $(this).text('Syncing...').attr('disabled', 'disabled');
-                            syncLatestPosts(posts_per_page, 0);
-                        });
-                    }(jQuery));
-                </script>
             </div>
         </div>
         <div class="options_right">
@@ -500,3 +453,49 @@ use \Enpii\WpPlugin\Fbcs\Fbcs;
         </div>
     </div>
 </div>
+
+<script>
+    jQuery(document).ready(function ($) {
+        var $syncLatestPosts = $('#sync-latest-posts');
+        var syncLatestPostsText = $syncLatestPosts.text();
+
+        var posts_per_page = 2;
+
+        function syncLatestPosts(posts_per_page, offset) {
+            $.ajax({
+                type: 'POST',
+                dataType: 'json',
+                url: ajaxurl,
+                data: {
+                    'action': 'fbcs_sync_latest_posts',
+                    'posts_per_page': posts_per_page,
+                    'offset': offset,
+                    'limit': -1
+                },
+                complete: function (event) {
+                },
+                success: function (response) {
+                    var found_posts = parseInt(response.found_posts);
+                    var offset = parseInt(response.offset);
+
+                    if (found_posts > (offset + 1) * posts_per_page) {
+                        $syncLatestPosts.text('Syncing...' + (posts_per_page * (offset + 1)) + ' to ' + (posts_per_page * (offset + 2) > found_posts ? found_posts : posts_per_page * (offset + 2)) + ' of ' + found_posts);
+                        syncLatestPosts(posts_per_page, offset + 1);
+                    } else {
+                        $syncLatestPosts.text(syncLatestPostsText).removeAttr('disabled');
+                        console.log('Sync completed!');
+                    }
+                },
+                error: function (exception) {
+                    console.log('Ajax failed!');
+                    console.log(exception);
+                }
+            });
+        }
+
+        $syncLatestPosts.click(function () {
+            $(this).text('Syncing...').attr('disabled', 'disabled');
+            syncLatestPosts(posts_per_page, 0);
+        });
+    }(jQuery));
+</script>
